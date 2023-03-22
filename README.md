@@ -1,5 +1,5 @@
 ## Tensorflow yamnet_classlassifier
 
-run `npm install`
-insert wav path on `await analyzeAudioFile("0/0_239.wav")`
-and run `npm start`
+1. run `npm install`
+2. insert wav files on folder `/wav`
+3. then run `npm start`

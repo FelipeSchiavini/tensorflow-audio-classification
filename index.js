@@ -8,7 +8,14 @@ const classes = require("./yamnet_class.json");
 
 
 const main = async () => {
-  await analyzeAudioFile("0/0_239.wav");
+  const files = fs.readdirSync("wav");
+  for (let index = 0; index < files.length; index++) {
+    const filename = files[index];
+    const pathToBeAnalyzed = `wav/${filename}`;
+    console.log("\n\n🚀 ~ file: index.js:16 ~ main ~ pathToBeAnalyzed:", pathToBeAnalyzed)
+    await analyzeAudioFile(pathToBeAnalyzed);
+
+  }
   console.log("Finished...");
 };
 
@@ -16,7 +23,8 @@ const analyzeAudioFile = async (filename) => {
   console.log("Analyzing audio...");
   const samples = await readWavAudio(filename);
   const scaled = normalizeVector(Array.from(samples));
-  predictSound(scaled)
+  const { prediction, classes } = await predictSound(scaled,)
+  console.log(`❌✅ prediction for ${filename}: ${prediction} - ${classes}`)
 };
 
 const readWavAudio = async (wavFilename) => {
@@ -38,9 +46,7 @@ const normalizeVector = (vector) => {
     const originalScale = [min, max];
     const adjustedScale = [-1, 1];
     return vector.map((value) => scaleValue(value, originalScale, adjustedScale));
-
   }
-  
 };
 
 const scaleValue = (value, originalScale, adjustedScale) => {
@@ -71,9 +77,9 @@ const predictSound = async (wav) => {
     .mean((axis = 0))
     .argMax()
     .print((verbose = true));
-  const predicion = scores.dataSync().slice(0, 521).indexOf(Math.max(...scores.dataSync().slice(0, 521)))
+  const prediction = scores.dataSync().slice(0, 521).indexOf(Math.max(...scores.dataSync().slice(0, 521)))
 
-  console.log(`predicion: ${predicion} - ${classes[predicion]}`)
+  return { prediction, classes: classes[prediction] }
 };
 
 
